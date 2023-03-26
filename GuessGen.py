@@ -107,7 +107,7 @@ class GuessGen:
                 if flow_copy[i] == 0: #if current letter in decrementing flow
                     #if letter prior is on MIN OR MAX AND flow has changed, then we move
                     if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
-                        if (flow_self[(i-1)] - flow_copy[(i-1)] != 0): 
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
                             if ord(original_str[i]) == 32: #if current letter is ASCII 32
                                 new_char = chr(33) #incremented instead of decrementing 
                                 original_str[i] = new_char #new char added to guess
@@ -119,7 +119,7 @@ class GuessGen:
                 elif flow_copy[i] == 1: #if incrementing flow
                     #if letter prior is on MIN OR MAX AND flow has changed, then we move
                     if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
-                        if (flow_self[(i-1)] - flow_copy[(i-1)] != 0): 
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
                             if ord(original_str[i]) == 126: #if current letter ASCII 126
                                 new_char = chr(125) #decremented 
                                 original_str[i] = new_char
