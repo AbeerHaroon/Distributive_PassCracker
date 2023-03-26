@@ -103,29 +103,31 @@ class GuessGen:
                         current = ord(original_str[i])
                         new_char = current + 1
                         original_str[i] = chr(new_char)
-            if i == (len(original_str) - 1): #if last letter
+            elif i == (len(original_str) - 1): #if last letter
                 if flow_copy[i] == 0: #if current letter in decrementing flow
                     #if letter prior is on MIN OR MAX AND flow has changed, then we move
-                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) and (self.flow_signs[(i-1)] - flow_copy[(i-1)] != 0): 
-                        if ord(original_str[i]) == 32: #if current letter is ASCII 32
-                            new_char = chr(33) #incremented instead of decrementing 
-                            original_str[i] = new_char #new char added to guess
-                            flow_copy[i] = 1 #changed flow
-                        else : #if current letter not MIN
-                            current = ord(original_str[i])
-                            new_char = current - 1
-                            original_str[i] = chr(new_char)
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if (flow_self[(i-1)] - flow_copy[(i-1)] != 0): 
+                            if ord(original_str[i]) == 32: #if current letter is ASCII 32
+                                new_char = chr(33) #incremented instead of decrementing 
+                                original_str[i] = new_char #new char added to guess
+                                flow_copy[i] = 1 #changed flow
+                            else : #if current letter not MIN
+                                current = ord(original_str[i])
+                                new_char = current - 1
+                                original_str[i] = chr(new_char)
                 elif flow_copy[i] == 1: #if incrementing flow
                     #if letter prior is on MIN OR MAX AND flow has changed, then we move
-                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) and (self.flow_signs[(i-1)] - flow_copy[(i-1)] != 0): 
-                        if ord(original_str[i]) == 126: #if current letter ASCII 126
-                            new_char = chr(125) #decremented 
-                            original_str[i] = new_char
-                            flow_copy[i] = 0 #changed flow
-                        else: #current letter is not MAX
-                            current = ord(original_str[i])
-                            new_char = current + 1
-                            original_str[i] = chr(new_char)
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if (flow_self[(i-1)] - flow_copy[(i-1)] != 0): 
+                            if ord(original_str[i]) == 126: #if current letter ASCII 126
+                                new_char = chr(125) #decremented 
+                                original_str[i] = new_char
+                                flow_copy[i] = 0 #changed flow
+                            else: #current letter is not MAX
+                                current = ord(original_str[i])
+                                new_char = current + 1
+                                original_str[i] = chr(new_char)
             else : #other letters. depend on letter prior
                 if flow_copy[i] == 0: #if current letter in decrementing flow
                     #if letter prior is on MIN OR MAX AND flow has changed, then we move
