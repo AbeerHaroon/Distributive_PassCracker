@@ -1,13 +1,17 @@
 #!/usr/bin/python3
 import crypt
+import multiprocessing
 from os import sched_getaffinity
+from multiprocessing import Process
 #The Guesser Machine
 #Takes guess string as parameter then works on it
 #has a list of 1s and 0s (no error checking) that indicate if incrementing or decrementing flow
+#can work as a single threaded cracker by itself
 class GuessGen: 
 
     MAXIMUM = 126
     MINIMUM = 32
+
 
     guess = "default" 
     
@@ -20,7 +24,7 @@ class GuessGen:
     flow_signs = [] 
 
     def __init__(self):
-        self.guess = "~}" #8 whitespaces
+        self.guess = ""
         for letter in  self.guess :
             self.flow_signs.append(1)
         
@@ -65,6 +69,7 @@ class GuessGen:
                     #    self.flow_signs.append(1)
                     a = self.tick(attempt)
                     attempt = a
+                    length = len(attempt)
         return "NO_PW_FOUND"
     #the motion to tick the combination one move forward
     #the first letter keeps going up and down
@@ -76,6 +81,154 @@ class GuessGen:
     #Note: There is no increment when at ASCII 126
     #      There is no decrement when at ASCII 32 
     def tick(self,g):
+        print("before tick:", end=" ")
+        print(g)
+        original_str = list(str(g)) #the guess, turned to a List, so we could access each chars
+        #if the flow changes, we'll reflect it on this copy then assign to instance variable
+        #Doing this because not sure how Python behaves when passing Lists
+        flow_copy = [] 
+        flow_self = self.flow_signs
+        flow_copy = flow_self.copy()
+        iterated_str = str(g) #new string which we will return
+        i = 0 #this helps to check the flow in each character
+
+        while (i != len(iterated_str)): #while i is less than length of guess string
+            if i == 0: #if first letter
+                if flow_copy[i] == 0: #if decrementing flow
+                    if ord(original_str[i]) == 32: 
+                        if(len(original_str) == 1): #if 1 letter in guess
+                            flow_copy[i] = 1 #changed flow of current bit 
+                            new_char = chr(32) 
+                            original_str[i] = new_char #ASCII 32 in first letter.
+                            #
+                            original_str.append(" ") #added ASCII 32 to guess List form
+                            flow_copy.append(1) #adjusted flow
+                        else: #length of guess is not 1    
+                            flow_copy[i] = 1 #changed flow to increment now 
+                    else :
+                        current = ord(original_str[i]) #take ascii value
+                        new_char = current - 1 #decrement
+                        original_str[i] = chr(new_char) #convert to char, then into string
+                elif flow_copy[i] == 1: #if incrementing flow
+                    if(ord(original_str[i])) == 126:
+                        #new_char = chr(125) #decremented. changed flow
+                        #g[i:(i+1)] = new_char
+                        flow_copy[i] = 0 #changed to decrementing flow
+                    else :
+                        current = ord(original_str[i])
+                        new_char = current + 1
+                        original_str[i] = chr(new_char)
+            elif i == (len(original_str) - 1): #if last letter
+                if flow_copy[i] == 0: #if current letter in decrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 32: #if current letter is ASCII 32
+                                new_char = chr(33) #incremented instead of decrementing 
+                                original_str[i] = new_char #new char added to guess
+                                flow_copy[i] = 1 #changed flow
+                            else : #if current letter not MIN
+                                current = ord(original_str[i])
+                                new_char = current - 1
+                                original_str[i] = chr(new_char)
+                elif flow_copy[i] == 1: #if incrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 126: #if current letter ASCII 126
+                                new_char = chr(126) #decremented 
+                                original_str[i] = new_char
+                                flow_copy[i] = 0 #changed flow
+                                
+                                original_str.append(" ") #increase string length. 
+                                flow_copy.append(1) #added incrementing flow
+                            else: #current letter is not MAX
+                                current = ord(original_str[i])
+                                new_char = current + 1
+                                original_str[i] = chr(new_char)
+            else : #other letters. depend on letter prior
+                if flow_copy[i] == 0: #if current letter in decrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) :
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 32: #if current letter is ASCII 32
+                                #new_char = chr(33) #incremented instead of decrementing 
+                                #g[i:(i+1)] = new_char
+                                flow_copy[i] = 1 #changed flow
+                            else : #if current letter not MIN
+                                current = ord(original_str[i])
+                                new_char = current - 1
+                                original_str[i] = chr(new_char)
+                elif flow_copy[i] == 1: #if incrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) :
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 126: #if current letter ASCII 126
+                            #new_char = chr(125) #decremented 
+                            #g[i:(i+1)] = new_char
+                                flow_copy[i] = 0 #changed flow
+                            else: #current letter is not MAX
+                                current = ord(original_str[i])
+                                new_char = current + 1
+                                original_str[i] = chr(new_char)
+            
+            i += 1 #increment index of guess string (g)
+            self.flow_signs = flow_copy #adjust new flow (if any changes)   
+            #end of while loop
+
+        iterated_str = str(original_str)
+        z = ""
+        index = 0
+        while index != len(original_str):
+            z=z+original_str[index]
+            index += 1
+
+        print("After iteration:",end=" ")    
+        print(z)
+        print("length: ", end=" ")
+        print(list(z))
+        self.guess = z #change instance variable to the guess we just ticked to
+        #done iterating through guess      
+        return z
+
+    #ASSUMPTION FOR MULTIPROCESSING CODE
+    #Responsibility of GuessGen user to inquire their system's number of cores
+    #use methods if one's system has more than 1 core available to use
+    #-----------------------------
+    #Multiprocessing code below
+    #-----------------------------
+
+
+    #crack cycle that engages whatever available cores for use.
+    #in Unix (Fedora): the default is os.fork() for making sub processes
+    # as of current design, one core is used to use Manager()
+    def multiCrackCycle(self):
+        with multiprocessing.Manager() as manager:
+            mLock = manager.Lock() #shared lock amongst processes (like a mutex lock)
+            numCores = self.getCores() #num of processes
+            attempt = manager.list()
+            s1 = "~"
+            s2 = "12"
+            p1 = Process(target=self.tickLock(lock=mLock,g=s1))
+            p2 = Process(target=self.tickLock(lock=mLock,g=s2))
+            a = p1.start()
+            b = p2.start()
+            attempt.append(a)
+            attempt.append(b)
+            p1.join()
+            p2.join()
+            print(attempt)
+        
+    
+    #the task carried out by each sub process
+    #passing string variable guess
+    def regionActivity(self,lock,guess):
+        with lock:
+            print()
+
+    #Helper functions below
+
+    def tickLock(self, lock, g):
         print("before tick:", end=" ")
         print(g)
         original_str = list(str(g)) #the guess, turned to a List, so we could access each chars
