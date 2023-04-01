@@ -24,7 +24,7 @@ class GuessGen:
     flow_signs = [] 
 
     def __init__(self):
-        self.guess = ""
+        self.guess = " "
         for letter in  self.guess :
             self.flow_signs.append(1)
         
@@ -228,9 +228,9 @@ class GuessGen:
 
     #Helper functions below
 
-    def tickLock(self, lock, g):
+    def tick(self,g):
         print("before tick:", end=" ")
-        print(g)
+        print(str(list(g)))
         original_str = list(str(g)) #the guess, turned to a List, so we could access each chars
         #if the flow changes, we'll reflect it on this copy then assign to instance variable
         #Doing this because not sure how Python behaves when passing Lists
@@ -259,9 +259,17 @@ class GuessGen:
                         original_str[i] = chr(new_char) #convert to char, then into string
                 elif flow_copy[i] == 1: #if incrementing flow
                     if(ord(original_str[i])) == 126:
+                        if(len(original_str) == 1): #if 1 letter in guess
+                            flow_copy[i] = 0 #changed flow of current bit 
+                            #new_char = chr(32) 
+                            #original_str[i] = new_char #ASCII 32 in first letter.
+                            #
+                            original_str.append(" ") #added ASCII 32 to guess List form
+                            flow_copy.append(1) #adjusted flow
+                        else: #length of guess is not 1  
                         #new_char = chr(125) #decremented. changed flow
                         #g[i:(i+1)] = new_char
-                        flow_copy[i] = 0 #changed to decrementing flow
+                            flow_copy[i] = 0 #changed to decrementing flow
                     else :
                         current = ord(original_str[i])
                         new_char = current + 1
@@ -338,7 +346,6 @@ class GuessGen:
         self.guess = z #change instance variable to the guess we just ticked to
         #done iterating through guess      
         return z
-
 
 
     def recalibrateFlowIndex(s) :
