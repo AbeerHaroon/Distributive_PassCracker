@@ -1,6 +1,6 @@
 import socket
 
-MULTICAST_GROUP = '224.0.0.0' # multicast group IP address
+MULTICAST_GROUP = '225.4.2.0' # multicast group IP address
 PORT = 5000      # multicast group port
 
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)

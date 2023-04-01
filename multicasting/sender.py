@@ -1,7 +1,7 @@
 import socket
 
 MULTICAST_GROUP = '224.0.0.0' # multicast group IP address
-PORT = 5007      # multicast group port
+PORT = 5000      # multicast group port
 msg = b"Hello, World!"
 
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
