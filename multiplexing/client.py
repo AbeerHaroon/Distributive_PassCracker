@@ -95,7 +95,7 @@ ans = "" #return iterated string to this
 if single == 1: #if single threaded chosen
     g = GuessGen.GuessGen()
     x = parseHash(to_crack)
-    ans = g.crackCycle(to_crack) #bottleneck here most likely
+    ans = g.crackCycle(x) #bottleneck here most likely
 elif multi == 1 :
     hg = HashGuesser.HashGuesser()
     hashed_lines = []

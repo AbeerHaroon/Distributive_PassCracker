@@ -69,7 +69,7 @@ def mainMultiplex():
                     try:
                         num = int(data.decode())
                         retrieve = hashed_passes[num]
-                        sock.sendall(retrieve[1])
+                        sock.sendall(retrieve)
                     except IndexError as e:
                         print("Index out of bounds. double check arguments on client")
                         sock.close()
@@ -132,7 +132,7 @@ def defaultMultiplex():
                     try:
                         num = int(data.decode())
                         retrieve = hashed_passes[num]
-                        sock.sendall(retrieve[1])
+                        sock.sendall(retrieve)
                     except IndexError as e:
                         print("Index out of bounds. double check arguments on client")
                         sock.close()
@@ -223,7 +223,7 @@ if full_mode == 1:
                 # print("extracted hash:",end="")
                 # print(hashed)
                 fullHash = str(line)
-                userInfo = (u,fullHash) 
+                userInfo = fullHash
                 hashed_passes.append(userInfo)
         #end of file context
     #end of for loop
@@ -233,15 +233,15 @@ if full_mode == 1:
     else:
         print("following hashed passwords found")
         for h in hashed_passes:
-            print(h[0], ": ", h[1])
+            print("- ", h)
 
 elif default_mode == 1:
     u1= "user1"
     u2 = "uefa"
     u3 = "joejoe420"
-    hashed_passes.append((u1,def_toCrack))
-    hashed_passes.append((u2,def_toCrack2))
-    hashed_passes.append((u3,def_toCrack3))
+    hashed_passes.append((def_toCrack))
+    hashed_passes.append((def_toCrack2))
+    hashed_passes.append((def_toCrack3))
 
 
 #solved_passes = []
@@ -257,7 +257,7 @@ if full_mode == 1:
         if x.isdigit() is True:
             print("requested hash pass index ", x)
         else:
-            print("pass for ", crackThis[0], " is ", x)
+            print("pass is ", x)
         #
         print("if more passwords remaining simply start client machine and reconnect to me")
 elif default_mode == 1 :
