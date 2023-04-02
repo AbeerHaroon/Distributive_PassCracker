@@ -162,7 +162,7 @@ def make_request_to_server(request):
     if THREADS == 1:
         start_cracking_given_letters(guessers,string.ascii_letters)
     elif THREADS > 1:
-        partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
+        partitioned_letters = partition_letters(list(string.printable), THREADS)
         initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
 
     results = show_results(guessers, THREADS)
