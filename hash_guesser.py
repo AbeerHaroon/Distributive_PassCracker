@@ -1,14 +1,42 @@
+import argparse
+import multiprocessing
 import string
 import threading
 import time
 import concurrent.futures
 import warnings
+import socket
+
+from client_request import ClientRequest
+
+
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     import crypt
 
 lock = threading.Lock()
+
+DEFAULT_PORT = 5000
+
+
+
+def define_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--out', help='The IP of the server in which we are connecting to.')
+    parser.add_argument('-p', '--port', help='The Port number of the server we are connecting to. Defaults to 5000', default=DEFAULT_PORT)
+    parser.add_argument("-t", "--threads", help=f"The number of threads we would like to run the program on. "
+                                                "Defaults to the current machine's number of CPU Cores", default=multiprocessing.cpu_count())
+    
+    
+    request = ClientRequest()
+    args = parser.parse_args()
+    request.ip = args.out
+    request.port = int(args.port)
+    request.threads = int(args.threads)
+
+    return request
+
 
 class HashGuesser:
 
@@ -31,7 +59,6 @@ class HashGuesser:
                f'Time taken: {self.time_taken:.6f} (seconds)\n'
 
     def crack_hash(self, char_list, n, empty_list=[]):
-        print(''.join(empty_list))
         guess = crypt.crypt(''.join(empty_list), self.hashed_password)
         self.tries += 1
         if guess == self.hashed_password:
@@ -89,11 +116,11 @@ def partition_letters(a, n):
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
-def show_results(guessers):
-    print("----------- RESULTS -----------")
-
+def show_results(guessers, threads):
+    result =f"\n----------- RESULTS w/{threads} threads -----------\n"
     for guess in guessers:
-        print(guess)
+        result += f'{guess}\n'
+    return result
 
 def extract_etc_shadow(hashed_line):
     info_array = hashed_line.split(":")
@@ -111,18 +138,44 @@ def extract_etc_shadow(hashed_line):
     return hash_guess
 
 
-def main():
+import socket
 
-    hashed_lines = ['sepehrman:$y$j9T$.Ciip2iHePTF7RvA1q3rX0$OeW1icDofEhPQhV4jPStlhsxPOmqmNcZlgaEfaXezE0:19381:0:99999:7:::\n', 'longpass:$1$Hc6V.QHW$NYVewhJpK/ejNYqbIuWqX/:19448:0:99999:7:::\n']
-    # TODO: GET hashed lines here using Multicast Sockets (Maybe comma-separated?)
+
+
+def make_request_to_server(request):
+    SERVER_ADDR = request.ip
+    SERVER_PORT = request.port
+    THREADS = request.threads
+
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((SERVER_ADDR, SERVER_PORT))
+
+    # Receive and print the welcome message from the server
+    hashed_lines = client_socket.recv(1024).decode()
+    hashed_lines = hashed_lines.split(',')
 
     guessers = []
     generate_guessers(hashed_lines, guessers)
-    threads = 4
-    print("Please wait. Cracking passwords")
-    partitioned_letters = partition_letters(list(string.ascii_lowercase), threads)
-    initiate_multithreaded_cracking(partitioned_letters, guessers, threads)
-    show_results(guessers)
+
+    print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
+    partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
+    initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
+    results = show_results(guessers, THREADS)
+    print(results)
+    client_socket.send(results.encode())
+
+    # Close the socket
+    client_socket.close()
+
+
+
+
+def main():
+    request = define_arguments()
+    make_request_to_server(request)
+
+
+
 
 
 if __name__ == '__main__':

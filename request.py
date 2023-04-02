@@ -6,6 +6,8 @@ class Request():
         self.threads = None
         self.time = None
         self.trials = None
+        self.ip = None
+        self.port = None
 
     def __str__(self):
         return f'(users: {self.users}, file: {self.file}, threads: {self.threads})'
