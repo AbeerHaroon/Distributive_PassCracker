@@ -2,12 +2,22 @@ import socket
 import GuessGen
 import sys
 import ipaddress
-
+import HashGuesser
+import os
+import string
 
 SERVER_IP = "192.168.1.75"
 SERVER_PORT = 5000
 single = 0 # if 1, single thread will be used
 multi = 0 # if 1, multi thread will be used #TODO Cracker from Sepehr_Cracker potentially
+
+#sepehrman:$y$j9T$.Ciip2iHePTF7RvA1q3rX0$OeW1icDofEhPQhV4jPStlhsxPOmqmNcZlgaEfaXezE0:19381:0:99999:7:::\n'
+def parseHash(fullHash):
+    usernameIndex = fullHash.find(":") #find instance of first :
+    minus_user = fullHash[usernameIndex+1:] #extract string starting from hash to end
+    last_colon = minus_user.find(":") #find index of next colon
+    extract_hash = minus_user[0:last_colon] #extract from beginning hash to colon (excluding)
+    return extract_hash
 
 def printUsage():
     print(" usage:")
@@ -77,9 +87,16 @@ ans = "" #return iterated string to this
 
 if single == 1: #if single threaded chosen
     g = GuessGen.GuessGen()
+    x = parseHash(to_crack)
     ans = g.crackCycle(to_crack) #bottleneck here most likely
 elif multi == 1 :
-    print("run Multi-threaded cracker here")
+    hg = HashGuesser.HashGuesser()
+    numCrackers = []
+    generate_guessers(hashed_lines, numCrackers)
+    t = len(os.sched_getaffinity(0))
+    partitioned_letters = partition_letters(list(string.ascii_lowercase), t)
+    initiate_multithreaded_cracking(partitioned_letters, numCrackers, t)
+    ans = str(numCrackers)
 
 client_socket.sendall(str(ans).encode())
 

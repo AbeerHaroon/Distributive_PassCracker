@@ -1,6 +1,7 @@
 import crypt
 import GuessGen
 import sys
+import hash_guesser as hg
 
 def main():
     users = [] #List of users to crack

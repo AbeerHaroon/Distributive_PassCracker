@@ -2,15 +2,16 @@ import select
 import socket
 import sys
 import GuessGen
+import hash_sender
 
 SERVER_PORT = 5000
 unlock_pw = "please_work"
 #default hashed pass to crack. yescrypt for-> 2!
-def_toCrack = "$y$j9T$oHjB961YNYYZaS/B9V5sr1$eqVAPSL4NpprMtfP9ie6jayp.rdiGsdFQPa/KRVOxm7" 
+def_toCrack = "user1:$y$j9T$oHjB961YNYYZaS/B9V5sr1$eqVAPSL4NpprMtfP9ie6jayp.rdiGsdFQPa/KRVOxm7:19381:0:99999:7:::\n" 
 #hash for @1
-def_toCrack2 = "$y$j9T$i8yp74CnZmCPRJVoEMqzq.$8qhOee2ONuRaDFw1Ol5YCYg5JzJGUStUkLV7gqO9pp6"
+def_toCrack2 = "uefa:$y$j9T$i8yp74CnZmCPRJVoEMqzq.$8qhOee2ONuRaDFw1Ol5YCYg5JzJGUStUkLV7gqO9pp6:19381:0:99999:7:::\n"
 # hash for f3
-def_toCrack3 = "$y$j9T$oH7nWb5ua.cMKZ/UbFzgO1$1.SCQJJKyGBoLdSRqbJuERDvyOaVvIA3qHy6F9UeRB5"
+def_toCrack3 = "joejoe420:$y$j9T$oH7nWb5ua.cMKZ/UbFzgO1$1.SCQJJKyGBoLdSRqbJuERDvyOaVvIA3qHy6F9UeRB5:19381:0:99999:7:::\n"
 default_mode = 0 # use a preset password for testing
 full_mode = 0 # server will read its /etc/shadow if 1 
 cracked_pw = ""
@@ -184,6 +185,7 @@ if full_mode == 1:
             users.append(u) #add user
     except ValueError as e:
         print("must use -u to list users")
+        print("list users at the end")
         sys.exit()
 # numUsers = 1
 # while(numUsers < len(sys.argv)):
@@ -201,13 +203,14 @@ if full_mode == 1:
             print(line)
             uName_Index = line.find(u)
             if uName_Index != -1: #if username found
-                passIndexFirst = len(u) + 1
-                chop = line[uName_Index+(passIndexFirst):] #starting from first index where username found + add up to index of when pass starts 
-                colonAfterPass = chop.find(":") #find index of first occurrence of colon
-                hashed = chop[0:colonAfterPass] #excluded colon index
-                print("extracted hash:",end="")
-                print(hashed)
-                userInfo = (u,hashed) 
+                # passIndexFirst = len(u) + 1
+                # chop = line[uName_Index+(passIndexFirst):] #starting from first index where username found + add up to index of when pass starts 
+                # colonAfterPass = chop.find(":") #find index of first occurrence of colon
+                # hashed = chop[0:colonAfterPass] #excluded colon index
+                # print("extracted hash:",end="")
+                # print(hashed)
+                fullHash = str(line)
+                userInfo = (u,fulLHash) 
                 hashed_passes.append(userInfo)
         #end of file context
     #end of for loop
@@ -228,6 +231,7 @@ elif default_mode == 1:
 #solved_passes = []
 # to_crack = hashed_passes[0] #first password found for now
 
+#sending full hashed passes, username, salt, everything
 if full_mode == 1:
     for crackThis in hashed_passes:
         x = mainMultiplex(crackThis[1])
