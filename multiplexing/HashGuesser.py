@@ -89,13 +89,13 @@ def partition_letters(self,a, n):
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
-def show_results(guessers):
+def show_results(self, guessers):
     print("----------- RESULTS -----------")
 
     for guess in guessers:
         print(guess)
 
-def extract_etc_shadow(hashed_line):
+def extract_etc_shadow(self,hashed_line):
     info_array = hashed_line.split(":")
     hash_details = info_array[1][1:].split('$')
 
