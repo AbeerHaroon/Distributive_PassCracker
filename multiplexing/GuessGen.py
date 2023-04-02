@@ -111,6 +111,96 @@ class GuessGen:
                         original_str[i] = chr(new_char) #convert to char, then into string
                 elif flow_copy[i] == 1: #if incrementing flow
                     if(ord(original_str[i])) == 126:
+                        if(len(original_str) == 1): #if 1 letter in guess
+                            flow_copy[i] = 0 #changed flow of current bit 
+                            #new_char = chr(32) 
+                            #original_str[i] = new_char #ASCII 32 in first letter.
+                            #
+                            original_str.append(" ") #added ASCII 32 to guess List form
+                            flow_copy.append(1) #adjusted flow
+                        else: #length of guess is not 1  
+                        #new_char = chr(125) #decremented. changed flow
+                        #g[i:(i+1)] = new_char
+                            flow_copy[i] = 0 #changed to decrementing flow
+                    else :
+                        current = ord(original_str[i])
+                        new_char = current + 1
+                        original_str[i] = chr(new_char)
+            elif i == (len(original_str) - 1): #if last letter
+                if flow_copy[i] == 0: #if current letter in decrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 32: #if current letter is ASCII 32
+                                new_char = chr(33) #incremented instead of decrementing 
+                                original_str[i] = new_char #new char added to guess
+                                flow_copy[i] = 1 #changed flow
+                            else : #if current letter not MIN
+                                current = ord(original_str[i])
+                                new_char = current - 1
+                                original_str[i] = chr(new_char)
+                elif flow_copy[i] == 1: #if incrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)):
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 126: #if current letter ASCII 126
+                                new_char = chr(126) #decremented 
+                                original_str[i] = new_char
+                                flow_copy[i] = 0 #changed flow
+                                
+                                original_str.append(" ") #increase string length. 
+                                flow_copy.append(1) #added incrementing flow
+                            else: #current letter is not MAX
+                                current = ord(original_str[i])
+                                new_char = current + 1
+                                original_str[i] = chr(new_char)
+            else : #other letters. depend on letter prior
+                if flow_copy[i] == 0: #if current letter in decrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) :
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 32: #if current letter is ASCII 32
+                                #new_char = chr(33) #incremented instead of decrementing 
+                                #g[i:(i+1)] = new_char
+                                flow_copy[i] = 1 #changed flow
+                            else : #if current letter not MIN
+                                current = ord(original_str[i])
+                                new_char = current - 1
+                                original_str[i] = chr(new_char)
+                elif flow_copy[i] == 1: #if incrementing flow
+                    #if letter prior is on MIN OR MAX AND flow has changed, then we move
+                    if ((ord(original_str[(i-1)]) == 32) or (ord(original_str[(i-1)]) == 126)) :
+                        if ( (flow_self[(i-1)]) - (flow_copy[(i-1)]) ) != 0: 
+                            if ord(original_str[i]) == 126: #if current letter ASCII 126
+                            #new_char = chr(125) #decremented 
+                            #g[i:(i+1)] = new_char
+                                flow_copy[i] = 0 #changed flow
+                            else: #current letter is not MAX
+                                current = ord(original_str[i])
+                                new_char = current + 1
+                                original_str[i] = chr(new_char)
+            
+            i += 1 #increment index of guess string (g)
+            self.flow_signs = flow_copy #adjust new flow (if any changes)   
+            #end of while loop #while i is less than length of guess string
+            if i == 0: #if first letter
+                if flow_copy[i] == 0: #if decrementing flow
+                    if ord(original_str[i]) == 32: 
+                        if(len(original_str) == 1): #if 1 letter in guess
+                            flow_copy[i] = 1 #changed flow of current bit 
+                            new_char = chr(32) 
+                            original_str[i] = new_char #ASCII 32 in first letter.
+                            #
+                            original_str.append(" ") #added ASCII 32 to guess List form
+                            flow_copy.append(1) #adjusted flow
+                        else: #length of guess is not 1    
+                            flow_copy[i] = 1 #changed flow to increment now 
+                    else :
+                        current = ord(original_str[i]) #take ascii value
+                        new_char = current - 1 #decrement
+                        original_str[i] = chr(new_char) #convert to char, then into string
+                elif flow_copy[i] == 1: #if incrementing flow
+                    if(ord(original_str[i])) == 126:
                         #new_char = chr(125) #decremented. changed flow
                         #g[i:(i+1)] = new_char
                         flow_copy[i] = 0 #changed to decrementing flow

@@ -254,12 +254,19 @@ if len(hashed_passes) > 1:
 if full_mode == 1:
     while True:
         x = mainMultiplex()
-        print("pass for ", crackThis[0], " is ", x)
+        if x.isdigit() is True:
+            print("requested hash pass index ", x)
+        else:
+            print("pass for ", crackThis[0], " is ", x)
+        #
         print("if more passwords remaining simply start client machine and reconnect to me")
 elif default_mode == 1 :
     while True:
         x = defaultMultiplex()
-        print("pass is: ", x)
+        if x.isdigit() is True:
+            print("requested hash pass index ", x)
+        else:
+            print("pass is: ", x)
         print("if more passwords remaining simply start client machine and reconnect to me")
 
 
