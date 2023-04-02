@@ -22,6 +22,7 @@ def parseHash(fullHash):
 def printUsage():
     print(" usage: (ORDER MATTERS)")
     print("\tpython3 client.py [temporary password] [IPv4 Address] [\'-s\' OR \'-m\']\n")
+    print("\t   temporary password ensures server sends the hashes we desire to crack")
     print("\t-s chooses single threaded cracker (predictable guess generation)")
     print("\t-m chooses multi threaded cracker (unpredictable guess generation)\n")
     print("\t(optional)-p [number] sets a server port. default is 5000\n")

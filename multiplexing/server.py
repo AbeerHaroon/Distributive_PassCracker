@@ -25,7 +25,8 @@ def printUsage():
     print("\tsudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
     print("\t\'-u\' List all username(s) whose password(s) desired to crack one by one, separated by space")
     print("    \tstate list of users always at the end\n")
-    print("\t(optional) \'-p\' [number] sets a server port. default is 5000. Can be used in both modes\n")
+    print("\t(optional) \'-p\' [number] sets a server port. default is 5000. \n\tCan be used in both modes.",
+    "\n\talways state users as the last set of arguments")
 
 #multiplex function for file mode
 def mainMultiplex(user_pw_hash):
