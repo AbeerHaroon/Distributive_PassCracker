@@ -26,7 +26,7 @@ def printUsage():
     print("\t-m chooses multi threaded cracker (unpredictable guess generation)\n")
     print("\t(optional)-p [number] sets a server port. default is 5000\n")
 
-if len(sys.argv) <= 4:
+if len(sys.argv) < 4:
     printUsage()
     sys.exit()
 
