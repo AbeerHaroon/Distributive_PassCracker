@@ -17,11 +17,11 @@ full_mode = 0 # server will read its /etc/shadow if 1
 cracked_pw = ""
 
 def printUsage():
-    print(" usage:")
+    print(" usage: (ORDER MATTERS)")
     print("\tfirst argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode\n")
-    print("\tdefault mode utilizes a preset hash for testing. Usage:")
+    print("\tdefault mode utilizes a preset hash for testing. Usage: (ORDER MATTERS)")
     print("\tsudo python3 server.py -d [number of machines]\n")
-    print("\t\'-f\' file mode usage:")
+    print("\t\'-f\' file mode usage: (list users always at the end. ORDER MATTERS)")
     print("\tsudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
     print("\t\'-u\' List all username(s) whose password(s) desired to crack one by one, separated by space")
     print("    \tstate list of users always at the end\n")
@@ -142,10 +142,10 @@ def defaultMultiplex(hash_pw):
         #end of while
     return pw
 
-if len(sys.argv) < 3:
+if len(sys.argv) < 3: #check minimum arg amount
     printUsage()
     sys.exit()
-if sys.argv[1] is None:
+if sys.argv[1] is None: #check file mode or default mode
     printUsage()
     sys.exit()
 if sys.argv[1] == "-f":
