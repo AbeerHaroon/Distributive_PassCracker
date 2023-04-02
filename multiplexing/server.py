@@ -236,9 +236,11 @@ if full_mode == 1:
     for crackThis in hashed_passes:
         x = mainMultiplex(crackThis[1])
         print("pass for ", hashed_passes[0], " is ", x)
+        print("if more passwords remaining simply start client machine and reconnect to me")
 elif default_mode == 1 :
     for crackThis in hashed_passes:
         x = defaultMultiplex(crackThis)
         print("pass is: ", x)
+        print("if more passwords remaining simply start client machine and reconnect to me")
 
 

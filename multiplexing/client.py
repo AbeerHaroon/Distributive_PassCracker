@@ -20,8 +20,8 @@ def parseHash(fullHash):
     return extract_hash
 
 def printUsage():
-    print(" usage:")
-    print("\tpython3 client.py [temporary password] [IPv4 Address] [\'-s\' or \'-m\']")
+    print(" usage: (ORDER MATTERS)")
+    print("\tpython3 client.py [temporary password] [IPv4 Address] [\'-s\' OR \'-m\']\n")
     print("\t-s chooses single threaded cracker (predictable guess generation)")
     print("\t-m chooses multi threaded cracker (unpredictable guess generation)\n")
     print("\t(optional)-p [number] sets a server port. default is 5000\n")
@@ -91,14 +91,18 @@ if single == 1: #if single threaded chosen
     ans = g.crackCycle(to_crack) #bottleneck here most likely
 elif multi == 1 :
     hg = HashGuesser.HashGuesser()
+    hashed_lines = []
+    hashed_lines.append(to_crack)
     numCrackers = []
     generate_guessers(hashed_lines, numCrackers)
-    t = len(os.sched_getaffinity(0))
+    t = len(os.sched_getaffinity(0)) #num of CPUs
     partitioned_letters = partition_letters(list(string.ascii_lowercase), t)
     initiate_multithreaded_cracking(partitioned_letters, numCrackers, t)
     ans = str(numCrackers)
 
 client_socket.sendall(str(ans).encode())
+
+print("reconnect to Server if more passwords left")
 
 # close the socket
 client_socket.close()
