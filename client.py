@@ -59,7 +59,6 @@ class HashGuesser:
                f'Time taken: {self.time_taken:.6f} (seconds)\n'
 
     def crack_hash(self, char_list, n, empty_list=[]):
-        print(''.join(empty_list))
         guess = crypt.crypt(''.join(empty_list), self.hashed_password)
         self.tries += 1
         if guess == self.hashed_password:
