@@ -13,9 +13,9 @@ multi = 0 # if 1, multi thread will be used #TODO Cracker from Sepehr_Cracker po
 
 #sepehrman:$y$j9T$.Ciip2iHePTF7RvA1q3rX0$OeW1icDofEhPQhV4jPStlhsxPOmqmNcZlgaEfaXezE0:19381:0:99999:7:::\n'
 def parseHash(fullHash):
-    usernameIndex = fullHash.find(":") #find instance of first :
+    usernameIndex = fullHash.index(":") #find instance of first :
     minus_user = fullHash[usernameIndex+1:] #extract string starting from hash to end
-    last_colon = minus_user.find(":") #find index of next colon
+    last_colon = minus_user.index(":") #find index of next colon
     extract_hash = minus_user[0:last_colon] #extract from beginning hash to colon (excluding)
     return extract_hash
 

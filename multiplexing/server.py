@@ -28,6 +28,13 @@ def printUsage():
     print("\t(optional) \'-p\' [number] sets a server port. default is 5000. \n\tCan be used in both modes.",
     "\n\talways state users as the last set of arguments")
 
+def parseHash(fullHash):
+    usernameIndex = fullHash.find(":") #find instance of first :
+    minus_user = fullHash[usernameIndex+1:] #extract string starting from hash to end
+    last_colon = minus_user.find(":") #find index of next colon
+    extract_hash = minus_user[0:last_colon] #extract from beginning hash to colon (excluding)
+    return extract_hash
+
 #multiplex function for file mode
 def mainMultiplex():
     
@@ -69,7 +76,7 @@ def mainMultiplex():
                     try:
                         num = int(data.decode())
                         retrieve = hashed_passes[num]
-                        sock.sendall(retrieve)
+                        sock.sendall(retrieve[1])
                     except IndexError as e:
                         print("Index out of bounds. double check arguments on client")
                         sock.close()
@@ -132,7 +139,7 @@ def defaultMultiplex():
                     try:
                         num = int(data.decode())
                         retrieve = hashed_passes[num]
-                        sock.sendall(retrieve)
+                        sock.sendall(retrieve[1])
                     except IndexError as e:
                         print("Index out of bounds. double check arguments on client")
                         sock.close()
@@ -223,7 +230,7 @@ if full_mode == 1:
                 # print("extracted hash:",end="")
                 # print(hashed)
                 fullHash = str(line)
-                userInfo = fullHash
+                userInfo = (u,fullHash)
                 hashed_passes.append(userInfo)
         #end of file context
     #end of for loop
@@ -233,15 +240,15 @@ if full_mode == 1:
     else:
         print("following hashed passwords found")
         for h in hashed_passes:
-            print("- ", h)
+            print("",h[0],": ", h[1])
 
 elif default_mode == 1:
     u1= "user1"
     u2 = "uefa"
     u3 = "joejoe420"
-    hashed_passes.append((def_toCrack))
-    hashed_passes.append((def_toCrack2))
-    hashed_passes.append((def_toCrack3))
+    hashed_passes.append((u1,def_toCrack))
+    hashed_passes.append((u2,def_toCrack2))
+    hashed_passes.append((u3,def_toCrack3))
 
 
 #solved_passes = []
