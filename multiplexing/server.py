@@ -16,15 +16,15 @@ full_mode = 0 # server will read its /etc/shadow if 1
 cracked_pw = ""
 
 def printUsage():
-    print("usage:")
-    print("first argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode ")
-    print("default mode utilizes a preset hash for testing. Usage:")
-    print("sudo python3 server.py -d [number of machines]")
-    print("\'-f\' file mode usage:")
-    print("sudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
-    print("\'-u\'\tList all username(s) whose password(s) desired to crack one by one, separated by space")
-    print("    \tstate list of users always at the end")
-    print("(optional) \'-p\' [number] sets a server port. default is 5000. Can be used in both modes")
+    print(" usage:")
+    print("\tfirst argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode\n")
+    print("\tdefault mode utilizes a preset hash for testing. Usage:")
+    print("\tsudo python3 server.py -d [number of machines]\n")
+    print("\t\'-f\' file mode usage:")
+    print("\tsudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
+    print("\t\'-u\' List all username(s) whose password(s) desired to crack one by one, separated by space")
+    print("    \tstate list of users always at the end\n")
+    print("\t(optional) \'-p\' [number] sets a server port. default is 5000. Can be used in both modes\n")
 
 #multiplex function for file mode
 def mainMultiplex(user_pw_hash):

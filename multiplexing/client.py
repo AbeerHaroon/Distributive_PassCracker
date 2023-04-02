@@ -10,11 +10,11 @@ single = 0 # if 1, single thread will be used
 multi = 0 # if 1, multi thread will be used #TODO Cracker from Sepehr_Cracker potentially
 
 def printUsage():
-    print("usage:")
-    print("python3 client.py [temporary password] [IPv4 Address] [\'-s\' or \'-m\']")
-    print("-s chooses single threaded cracker (predictable guess generation)")
-    print("-m chooses multi threaded cracker (unpredictable guess generation)")
-    print("(optional)-p [number] sets a server port. default is 5000")
+    print(" usage:")
+    print("\tpython3 client.py [temporary password] [IPv4 Address] [\'-s\' or \'-m\']")
+    print("\t-s chooses single threaded cracker (predictable guess generation)")
+    print("\t-m chooses multi threaded cracker (unpredictable guess generation)\n")
+    print("\t(optional)-p [number] sets a server port. default is 5000\n")
 
 if len(sys.argv) <= 4:
     printUsage()
