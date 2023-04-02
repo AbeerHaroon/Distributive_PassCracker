@@ -95,7 +95,7 @@ def handle_multiplexing(request: ServerRequest, hashed_lines):
         for sock in read_sockets:
             if sock == server_socket:
                 client_socket, client_address = server_socket.accept()
-                print(f'\nNew connection from {client_address}')
+                print(f'\nNew connection from {client_address[0]}')
 
                 msg = ','.join(hashed_lines)
                 print(f'Cracking the following hashes:\n{msg}')
