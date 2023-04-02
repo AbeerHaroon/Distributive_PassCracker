@@ -6,13 +6,29 @@ import ipaddress
 
 SERVER_IP = "192.168.1.75"
 SERVER_PORT = 5000
+single = 0 # if 1, single thread will be used
+multi = 0 # if 1, multi thread will be used #TODO Cracker from Sepehr_Cracker potentially
 
 def printUsage():
     print("usage:")
-    print("python3 client.py [temporary password] [IPv4 Address]")
+    print("python3 client.py [temporary password] [IPv4 Address] [\'-s\' or \'-m\']")
+    print("-s chooses single threaded cracker (predictable guess generation)")
+    print("-m chooses multi threaded cracker (unpredictable guess generation)")
     print("(optional)-p [number] sets a server port. default is 5000")
 
-if len(sys.argv) <= 3:
+if len(sys.argv) <= 4:
+    printUsage()
+    sys.exit()
+
+if sys.argv[3] == "-s":
+    single = 1
+elif sys.argv[3] == "-m":
+    print("Chosen multi-threaded cracker")
+    print("Be advised, multi-threaded cracker is buggy and testing is not complete")
+    print("Current state: \n",
+    "predictable combination of characters from letter range a-e in each bit of the guess")
+    multi = 1
+else:
     printUsage()
     sys.exit()
 
@@ -56,8 +72,14 @@ print("received: ", data.decode())
 
 to_crack = data.decode()
 
-g = GuessGen.GuessGen()
-ans = g.crackCycle(to_crack) #bottleneck here most likely
+
+ans = "" #return iterated string to this 
+
+if single == 1: #if single threaded chosen
+    g = GuessGen.GuessGen()
+    ans = g.crackCycle(to_crack) #bottleneck here most likely
+elif multi == 1 :
+    print("run Multi-threaded cracker here")
 
 client_socket.sendall(str(ans).encode())
 
