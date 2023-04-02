@@ -32,7 +32,7 @@ except ValueError as e:
 try:
     server_ip = sys.argv[2]
     x = ipaddress.IPv4Address(server_ip)
-    SERVER_IP = x
+    SERVER_IP = str(x)
 except ValueError as e:
     print("please state valid server IP")
     sys.exit()
