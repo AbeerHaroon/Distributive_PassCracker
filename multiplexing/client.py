@@ -96,6 +96,7 @@ if single == 1: #if single threaded chosen
     g = GuessGen.GuessGen()
     x = parseHash(to_crack)
     ans = g.crackCycle(x) #bottleneck here most likely
+    client_socket.sendall(str(ans).encode())
 elif multi == 1 :
     hg = HashGuesser.HashGuesser()
     hashed_lines = []
@@ -106,8 +107,9 @@ elif multi == 1 :
     partitioned_letters = partition_letters(list(string.ascii_lowercase), t)
     initiate_multithreaded_cracking(partitioned_letters, numCrackers, t)
     ans = str(numCrackers)
+    client_socket.sendall(str(ans).encode())
 
-client_socket.sendall(str(ans).encode())
+#client_socket.sendall(str(ans).encode())
 
 print("reconnect to Server if more passwords left")
 
