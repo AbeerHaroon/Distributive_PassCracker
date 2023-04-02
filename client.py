@@ -107,7 +107,6 @@ def initiate_multithreaded_cracking(partitioned_letters, guessers, threads):
 
 
 
-
 def generate_guessers(hashed_lines, guessers):
     for hashed_line in hashed_lines:
         guessers.append(extract_etc_shadow(hashed_line))
@@ -160,9 +159,9 @@ def make_request_to_server(request):
     print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
 
     if THREADS == 1:
-        start_cracking_given_letters(guessers,string.ascii_letters)
+        start_cracking_given_letters(guessers, string.printable)
     elif THREADS > 1:
-        partitioned_letters = partition_letters(list(string.printable), THREADS)
+        partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
         initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
 
     results = show_results(guessers, THREADS)
