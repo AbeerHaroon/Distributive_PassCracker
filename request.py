@@ -5,7 +5,6 @@ class Request():
         self.file = None
         self.threads = None
         self.time = None
-        self.trials = None
         self.ip = None
         self.port = None
 

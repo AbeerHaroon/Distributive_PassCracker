@@ -18,7 +18,6 @@ def define_arguments():
     parser.add_argument('-f', '--file', help='The shadow file we want to crack the password of.')
     parser.add_argument('users', nargs='*', help="Argument with no flag that is a list of usernames")
     parser.add_argument('--time', help='The shadow file we want to crack the password of.')
-    parser.add_argument('--trials', help='The shadow file we want to crack the password of.')
     parser.add_argument('-i', '--input', help='The IP Address in which we want to start our server. Defaults to IP of current machine', default=DEFAULT_IP)
     parser.add_argument('-p', '--port', help='The Port number in which we are stating our server on. Defaults to 5000', default=DEFAULT_PORT)
     parser.add_argument("-t", "--threads", help=f"The number of threads we would like to run the program on. "
@@ -33,7 +32,6 @@ def define_arguments():
     request.users = args.users
     request.threads = int(args.threads)
     request.time = args.time
-    request.trials = args.trials
 
     errors = []
     
