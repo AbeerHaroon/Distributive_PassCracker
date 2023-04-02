@@ -160,7 +160,7 @@ def make_request_to_server(request):
     print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
 
     if THREADS == 1:
-        start_cracking_given_letters(guessers, list(string.ascii_letters))
+        start_cracking_given_letters(guessers,string.ascii_letters)
     elif THREADS > 1:
         partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
         initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
