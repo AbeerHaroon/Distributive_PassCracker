@@ -96,6 +96,7 @@ if single == 1: #if single threaded chosen
     g = GuessGen.GuessGen()
     x = parseHash(to_crack)
     ans = g.crackCycle(x) #bottleneck here most likely
+    print("Password: ",ans)
     client_socket.sendall(str(ans).encode())
 elif multi == 1 :
     hg = HashGuesser.HashGuesser()

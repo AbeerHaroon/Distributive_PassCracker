@@ -252,21 +252,16 @@ elif default_mode == 1 :
                     sock.sendall(retrieve[1].encode())        
                     sock.close()
                     inputs.remove(sock)
-                else:
-                    if data.decode() == "NO_PW_FOUND" :
-                        print("client could not find password")
-                        sock.close()
-                        inputs.remove(sock)
-                    else:
-                        print("response from a client")
-                        print("pass is: ", data.decode())
-                        pw = data.decode()
-                        keep = 0 
-                        sock.close()
-                        inputs.remove(sock) 
+                
+                elif data.decode() is not None:
+                    print("response from a client: ")
+                    print(" ", sample)
+                    pw = sample
+                    keep = 0 
+                    sock.close()
+                    inputs.remove(sock) 
                         # close the socket
-                        #sock.close()
-                        #inputs.remove(sock)
+            
             #end of going through any sockets where we read data from
         #end of while
     print("if more passwords remaining simply start client machine and reconnect to me")
