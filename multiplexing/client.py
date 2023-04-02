@@ -12,7 +12,7 @@ def printUsage():
     print("python3 client.py [temporary password] [IPv4 Address]")
     print("(optional)-p [number] sets a server port. default is 5000")
 
-if len(sys.argv) != 3:
+if len(sys.argv) <= 3:
     printUsage()
     sys.exit()
 
