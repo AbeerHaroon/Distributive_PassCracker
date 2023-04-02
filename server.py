@@ -94,7 +94,8 @@ def handle_multiplexing(request: ServerRequest, hashed_lines):
                 print(f'\nNew connection from {client_address[0]}')
 
                 msg = ','.join(hashed_lines)
-                print(f"Cracking Passwords. Awaiting other computers to finish cracking the following hashes...\n{'\n'.join(hashed_lines)}")
+                split = "\n".join(hashed_lines)
+                print(f"Cracking Passwords. Awaiting other computers to finish cracking the following hashes...\n{split}")
                 client_socket.send(msg.encode())
                 sockets_list.append(client_socket)
             else:
