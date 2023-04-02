@@ -15,9 +15,138 @@ default_mode = 0 # use a preset password for testing
 full_mode = 0 # server will read its /etc/shadow if 1 
 cracked_pw = ""
 
+def printUsage():
+    print("usage:")
+    print("first argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode ")
+    print("default mode utilizes a preset hash for testing. Usage:")
+    print("sudo python3 server.py -d")
+    print("\'-f\' file mode usage:")
+    print("sudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
+    print("\'-u\'\tList all username(s) whose password(s) desired to crack one by one, separated by space")
+    print("    \tstate list of users always at the end")
+    print("(optional) \'-p\' [number] sets a server port. default is 5000. Can be used in both modes")
+
+#multiplex function for file mode
+def mainMultiplex(user_pw_hash):
+    
+    # create a TCP/IP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    #socket level, REUSEADDR option, set to nonzero. helps us have 2 sockets at same port
+    #doc: https://www.gnu.org/software/libc/manual/html_node/Socket_002dLevel-Options.html#Socket_002dLevel-Options
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    # bind the socket to a specific address and port
+    server_address = ('0.0.0.0', SERVER_PORT)
+    server_socket.bind(server_address)
+
+    # listen for incoming connections
+    server_socket.listen(numConnections)
+
+    # create a list of sockets to monitor for incoming data
+    inputs = [server_socket]
+    keep = 1
+    while keep == 1:
+        #utilizes the inputs List() above. List of sockets 
+        # use the select module to monitor the list of sockets for incoming data
+        readable, writable, exceptional = select.select(inputs, [], [])
+
+        #iterate through the sockets that have data
+        for sock in readable: #there is activity in readable
+            if sock is server_socket:
+                # accept incoming connection
+                connection, client_address = sock.accept()
+                connection.setblocking(0)
+                inputs.append(connection)
+            else:
+                # receive incoming data
+                data = sock.recv(1024)
+                if data.decode() == unlock_pw:
+                    print("recognized temp pass from client")
+                    # echo the default hash back to the client
+                    sock.sendall(user_pw_hash.encode())
+                else:
+                    if data.decode() == "NO_PW_FOUND" :
+                        print("client could not find password")
+                        sock.close()
+                        inputs.remove(sock)
+                    else:
+                        print("response from a client")
+                        print("pass is ", data.decode())
+                        pw = data.decode()
+                        keep = 0
+                        sock.close()
+                        inputs.remove(sock)
+                        # close the socket
+                        #sock.close()
+                        #inputs.remove(sock)
+    #end of while
+    return pw
+
+#multiplex function for default mode. takes a single hash pass
+def defaultMultiplex(hash_pw):
+    
+    # create a TCP/IP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    #socket level, REUSEADDR option, set to nonzero. helps us have 2 sockets at same port
+    #doc: https://www.gnu.org/software/libc/manual/html_node/Socket_002dLevel-Options.html#Socket_002dLevel-Options
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    # bind the socket to a specific address and port
+    server_address = ('0.0.0.0', SERVER_PORT)
+    server_socket.bind(server_address)
+
+    # listen for incoming connections
+    server_socket.listen(numConnections)
+
+    # create a list of sockets to monitor for incoming data
+    inputs = [server_socket]
+    keep = 1
+    while keep == 1:
+        #utilizes the inputs List() above. List of sockets 
+        # use the select module to monitor the list of sockets for incoming data
+        readable, writable, exceptional = select.select(inputs, [], [])
+
+            #iterate through the sockets that have data
+        for sock in readable: #there is activity in readable
+            if sock is server_socket:
+                # accept incoming connection
+                connection, client_address = sock.accept()
+                connection.setblocking(0)
+                inputs.append(connection)
+            else:
+                # receive incoming data
+                data = sock.recv(1024)
+                if data.decode() == unlock_pw:
+                    print("recognized temp pass from client")
+                    # echo the default hash back to the client
+                    sock.sendall(hash_pw.encode())
+                else:
+                    if data.decode() == "NO_PW_FOUND" :
+                        print("client could not find password")
+                        sock.close()
+                        inputs.remove(sock)
+                    else:
+                        print("response from a client")
+                        print("pass is: ", data.decode())
+                        pw = data.decode()
+                        keep = 0 
+                        sock.close()
+                        inputs.remove(sock) 
+                        # close the socket
+                        #sock.close()
+                        #inputs.remove(sock)
+            #end of going through any sockets where we read data from
+        #end of while
+    return pw
+
+if len(sys.argv) < 3:
+    printUsage()
+    sys.exit()
 if sys.argv[1] is None:
     printUsage()
-
+    sys.exit()
 if sys.argv[1] == "-f":
     full_mode = 1
 elif sys.argv[1] == "-d":
@@ -112,129 +241,3 @@ elif default_mode == 1 :
         print("pass is: ", x)
 
 
-#multiplex function for file mode
-def mainMultiplex(user_pw_hash):
-    
-    # create a TCP/IP socket
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    #socket level, REUSEADDR option, set to nonzero. helps us have 2 sockets at same port
-    #doc: https://www.gnu.org/software/libc/manual/html_node/Socket_002dLevel-Options.html#Socket_002dLevel-Options
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    # bind the socket to a specific address and port
-    server_address = ('0.0.0.0', SERVER_PORT)
-    server_socket.bind(server_address)
-
-    # listen for incoming connections
-    server_socket.listen(numConnections)
-
-    # create a list of sockets to monitor for incoming data
-    inputs = [server_socket]
-    keep = 1
-    while keep == 1:
-        #utilizes the inputs List() above. List of sockets 
-        # use the select module to monitor the list of sockets for incoming data
-        readable, writable, exceptional = select.select(inputs, [], [])
-
-        #iterate through the sockets that have data
-        for sock in readable: #there is activity in readable
-            if sock is server_socket:
-                # accept incoming connection
-                connection, client_address = sock.accept()
-                connection.setblocking(0)
-                inputs.append(connection)
-            else:
-                # receive incoming data
-                data = sock.recv(1024)
-                if data.decode() == unlock_pw:
-                    print("recognized temp pass from client")
-                    # echo the default hash back to the client
-                    sock.sendall(user_pw_hash.encode())
-                else:
-                    if data.decode() == "NO_PW_FOUND" :
-                        print("client could not find password")
-                        sock.close()
-                        inputs.remove(sock)
-                    else:
-                        print("response from a client")
-                        print("pass is ", data.decode())
-                        pw = data.decode()
-                        keep = 0
-                        sock.close()
-                        inputs.remove(sock)
-                        # close the socket
-                        #sock.close()
-                        #inputs.remove(sock)
-    #end of while
-    return pw
-
-
-#multiplex function for default mode. takes a single hash pass
-def defaultMultiplex(hash_pw):
-    
-    # create a TCP/IP socket
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    #socket level, REUSEADDR option, set to nonzero. helps us have 2 sockets at same port
-    #doc: https://www.gnu.org/software/libc/manual/html_node/Socket_002dLevel-Options.html#Socket_002dLevel-Options
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    # bind the socket to a specific address and port
-    server_address = ('0.0.0.0', SERVER_PORT)
-    server_socket.bind(server_address)
-
-    # listen for incoming connections
-    server_socket.listen(numConnections)
-
-    # create a list of sockets to monitor for incoming data
-    inputs = [server_socket]
-    keep = 1
-    while keep == 1:
-        #utilizes the inputs List() above. List of sockets 
-        # use the select module to monitor the list of sockets for incoming data
-        readable, writable, exceptional = select.select(inputs, [], [])
-
-            #iterate through the sockets that have data
-        for sock in readable: #there is activity in readable
-            if sock is server_socket:
-                # accept incoming connection
-                connection, client_address = sock.accept()
-                connection.setblocking(0)
-                inputs.append(connection)
-            else:
-                # receive incoming data
-                data = sock.recv(1024)
-                if data.decode() == unlock_pw:
-                    print("recognized temp pass from client")
-                    # echo the default hash back to the client
-                    sock.sendall(hash_pw.encode())
-                else:
-                    if data.decode() == "NO_PW_FOUND" :
-                        print("client could not find password")
-                        sock.close()
-                        inputs.remove(sock)
-                    else:
-                        print("response from a client")
-                        print("pass is: ", data.decode())
-                        pw = data.decode()
-                        keep = 0 
-                        sock.close()
-                        inputs.remove(sock) 
-                        # close the socket
-                        #sock.close()
-                        #inputs.remove(sock)
-            #end of going through any sockets where we read data from
-        #end of while
-    return pw
-
-def printUsage():
-    print("usage:")
-    print("first argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode ")
-    print("default mode utilizes a preset hash for testing. Usage:")
-    print("sudo python3 server.py -d")
-    print("\'-f\' file mode usage:")
-    print("sudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
-    print("\'-u\'\tList all username(s) whose password(s) desired to crack one by one, separated by space")
-    print("    \tstate list of users always at the end")
-    print("(optional) \'-p\' [number] sets a server port. default is 5000. Can be used in both modes")

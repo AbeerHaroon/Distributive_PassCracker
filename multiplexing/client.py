@@ -7,6 +7,15 @@ import ipaddress
 SERVER_IP = "192.168.1.75"
 SERVER_PORT = 5000
 
+def printUsage():
+    print("usage:")
+    print("python3 client.py [temporary password] [IPv4 Address]")
+    print("(optional)-p [number] sets a server port. default is 5000")
+
+if len(sys.argv) != 3:
+    printUsage()
+    sys.exit()
+
 #try catch block for checking port number. can be used for checking 
 try:
     index_port = sys.argv.index("-p")
@@ -56,7 +65,3 @@ client_socket.sendall(str(ans).encode())
 client_socket.close()
 
 
-def printUsage():
-    print("usage:")
-    print("python3 client.py [temporary password] [IPv4 Address]")
-    print("(optional)-p [number] sets a server port. default is 5000")
