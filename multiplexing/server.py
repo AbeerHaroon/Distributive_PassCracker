@@ -86,6 +86,15 @@ while True:
                 # echo the data back to the client
                 sock.sendall(to_crack.encode())
             else:
+                if data.decode() == "NO_PW_FOUND" :
+                    print("client could not find password")
+                    sock.close()
+                    inputs.remove(sock)
+                else:
+                    print("response from a client")
+                    print("pass is ", data.decode())
+                    sock.close()
+                    inputs.remove(sock)
                 # close the socket
-                sock.close()
-                inputs.remove(sock)
+                #sock.close()
+                #inputs.remove(sock)

@@ -19,7 +19,7 @@ client_socket.sendall(message.encode())
 data = client_socket.recv(1024)
 print("received: ", data.decode())
 
-to_crack = data.encode()
+to_crack = data.decode()
 
 g = GuessGen.GuessGen()
 ans = g.crackCycle(to_crack)
