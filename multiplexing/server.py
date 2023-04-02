@@ -19,7 +19,7 @@ def printUsage():
     print("usage:")
     print("first argument is either: \n\t\'-d\' for default mode or \n\t\'-f\' for file mode ")
     print("default mode utilizes a preset hash for testing. Usage:")
-    print("sudo python3 server.py -d")
+    print("sudo python3 server.py -d [number of machines]")
     print("\'-f\' file mode usage:")
     print("sudo python3 server.py -f [number of machines] -u <user1> <user2> <user(n)...>")
     print("\'-u\'\tList all username(s) whose password(s) desired to crack one by one, separated by space")
@@ -223,9 +223,6 @@ elif default_mode == 1:
     hashed_passes.append(def_toCrack)
     hashed_passes.append(def_toCrack2)
     hashed_passes.append(def_toCrack3)
-    defaultMultiplex()
-    print(cracked_pw)
-    sys.exit()
 
 
 #solved_passes = []
