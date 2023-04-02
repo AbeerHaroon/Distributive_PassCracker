@@ -2,7 +2,7 @@ import select
 import socket
 import sys
 import GuessGen
-import hash_sender
+import HashGuesser
 
 SERVER_PORT = 5000
 unlock_pw = "please_work"
@@ -210,7 +210,7 @@ if full_mode == 1:
                 # print("extracted hash:",end="")
                 # print(hashed)
                 fullHash = str(line)
-                userInfo = (u,fulLHash) 
+                userInfo = (u,fullHash) 
                 hashed_passes.append(userInfo)
         #end of file context
     #end of for loop
@@ -230,6 +230,9 @@ elif default_mode == 1:
 
 #solved_passes = []
 # to_crack = hashed_passes[0] #first password found for now
+
+if len(hashed_passes) > 1:
+    print("Multiple passwords founds. Ensure clients join after each password is complete guessing")
 
 #sending full hashed passes, username, salt, everything
 if full_mode == 1:
