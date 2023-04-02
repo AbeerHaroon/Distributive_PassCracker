@@ -1,4 +1,4 @@
-class Request():
+class ServerRequest():
 
     def __init__(self):
         self.users = None

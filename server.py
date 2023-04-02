@@ -5,8 +5,7 @@ import time
 import concurrent.futures
 import warnings
 import multiprocessing
-from request import Request
-from hash_guesser import HashGuesser
+from server_request import ServerRequest
 import socket
 import select
 
@@ -23,7 +22,7 @@ def define_arguments():
                                                 "Defaults to the current machine's number of CPU Cores", default=multiprocessing.cpu_count())
 
 
-    request = Request()
+    request = ServerRequest()
     args = parser.parse_args()
     request.file = args.file
     request.port = args.port
@@ -55,7 +54,7 @@ def display_errors(errors):
 
 
 
-def find_lines_from_user(req: Request, username):
+def find_lines_from_user(req: ServerRequest, username):
     with open(req.file, "r") as file:
         lines = file.readlines()
         for line in lines:
@@ -76,7 +75,7 @@ def find_lines(request, hashed_lines):
 
 
 
-def handle_multiplexing(request: Request, hashed_lines):
+def handle_multiplexing(request: ServerRequest, hashed_lines):
 
     # Define server address and port
     SERVER_ADDR = request.ip
