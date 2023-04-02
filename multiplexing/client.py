@@ -95,7 +95,7 @@ elif multi == 1 :
     hashed_lines = []
     hashed_lines.append(to_crack)
     numCrackers = []
-    generate_guessers(hashed_lines, numCrackers)
+    hg.generate_guessers(hashed_lines, numCrackers)
     t = len(os.sched_getaffinity(0)) #num of CPUs
     partitioned_letters = partition_letters(list(string.ascii_lowercase), t)
     initiate_multithreaded_cracking(partitioned_letters, numCrackers, t)

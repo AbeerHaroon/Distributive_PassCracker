@@ -60,7 +60,7 @@ class HashGuesser:
         elif self.hashed_password.startswith('$y$'):
             self.hashing_type = 'yescrypt'
 
-def start_cracking_given_letters(guessers, letters):
+def start_cracking_given_letters(self,guessers, letters):
     letters_length = 1
     for hash_guesser in guessers:
         start = time.time()
@@ -72,7 +72,7 @@ def start_cracking_given_letters(guessers, letters):
         letters_length = 1
 
 
-def initiate_multithreaded_cracking(partitioned_letters, guessers, threads):
+def initiate_multithreaded_cracking(self,partitioned_letters, guessers, threads):
     with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
         for letters in partitioned_letters:
             with lock:
@@ -81,11 +81,11 @@ def initiate_multithreaded_cracking(partitioned_letters, guessers, threads):
 
 
 
-def generate_guessers(hashed_lines, guessers):
+def generate_guessers(self,hashed_lines, guessers):
     for hashed_line in hashed_lines:
         guessers.append(extract_etc_shadow(hashed_line))
 
-def partition_letters(a, n):
+def partition_letters(self,a, n):
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
