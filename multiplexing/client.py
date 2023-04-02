@@ -21,10 +21,12 @@ def parseHash(fullHash):
 
 def printUsage():
     print(" usage: (ORDER MATTERS)")
-    print("\tpython3 client.py [temporary password] [IPv4 Address] [\'-s\' OR \'-m\']\n")
-    print("\t   temporary password ensures server sends the hashes we desire to crack")
-    print("\t-s chooses single threaded cracker (predictable guess generation)")
-    print("\t-m chooses multi threaded cracker (unpredictable guess generation)\n")
+    print("\tpython3 client.py [a number] [IPv4 Address] [\'-s\' OR \'-m\']\n")
+    print("\t a number -  the index of the hash in the server.\n",
+          "\t             server has a list of hashes, we can ask for a specific index from the list\n",
+          "\t             (0 is first)")
+    print("\t-s - chooses single threaded cracker (predictable guess generation)")
+    print("\t-m - chooses multi threaded cracker (unpredictable guess generation)\n")
     print("\t(optional)-p [number] sets a server port. default is 5000\n")
 
 if len(sys.argv) < 4:
@@ -66,6 +68,10 @@ except ValueError as e:
     pass #do nothing
 
 message = sys.argv[1]
+if message.isdigit() is False:
+    print("Server carries a lsit of hashes to crack")
+    print("please print which index in list of hashed passes u wish to crack")
+    sys.exit()
 # create a TCP/IP socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -73,7 +79,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = (SERVER_IP, SERVER_PORT) #hard coded
 client_socket.connect(server_address)
 
-# send secret message to the server
+# send request to the server
 # message = "please_work"
 client_socket.sendall(message.encode())
 

@@ -5,7 +5,7 @@ import GuessGen
 import HashGuesser
 
 SERVER_PORT = 5000
-unlock_pw = "please_work"
+index_req = "please_work"
 #default hashed pass to crack. yescrypt for-> 2!
 def_toCrack = "user1:$y$j9T$oHjB961YNYYZaS/B9V5sr1$eqVAPSL4NpprMtfP9ie6jayp.rdiGsdFQPa/KRVOxm7:19381:0:99999:7:::\n" 
 #hash for @1
@@ -29,7 +29,7 @@ def printUsage():
     "\n\talways state users as the last set of arguments")
 
 #multiplex function for file mode
-def mainMultiplex(user_pw_hash):
+def mainMultiplex():
     
     # create a TCP/IP socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -63,10 +63,16 @@ def mainMultiplex(user_pw_hash):
             else:
                 # receive incoming data
                 data = sock.recv(1024)
-                if data.decode() == unlock_pw:
-                    print("recognized temp pass from client")
+                if (data.decode()).isdigit() == True:
+                    print("recognized a request from client")
                     # echo the default hash back to the client
-                    sock.sendall(user_pw_hash.encode())
+                    try:
+                        num = int(data.decode())
+                        retrieve = hashed_passes[num]
+                        sock.sendall(retrieve[1])
+                    except IndexError as e:
+                        print("Index out of bounds. double check arguments on client")
+                        sock.close()
                 else:
                     if data.decode() == "NO_PW_FOUND" :
                         print("client could not find password")
@@ -86,7 +92,7 @@ def mainMultiplex(user_pw_hash):
     return pw
 
 #multiplex function for default mode. takes a single hash pass
-def defaultMultiplex(hash_pw):
+def defaultMultiplex():
     
     # create a TCP/IP socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -120,10 +126,16 @@ def defaultMultiplex(hash_pw):
             else:
                 # receive incoming data
                 data = sock.recv(1024)
-                if data.decode() == unlock_pw:
-                    print("recognized temp pass from client")
+                if (data.decode()).isdigit == True:
+                    print("recognized request from client")
                     # echo the default hash back to the client
-                    sock.sendall(hash_pw.encode())
+                    try:
+                        num = int(data.decode())
+                        retrieve = hashed_passes[num]
+                        sock.sendall(retrieve[1])
+                    except IndexError as e:
+                        print("Index out of bounds. double check arguments on client")
+                        sock.close()
                 else:
                     if data.decode() == "NO_PW_FOUND" :
                         print("client could not find password")
@@ -224,9 +236,12 @@ if full_mode == 1:
             print(h[0], ": ", h[1])
 
 elif default_mode == 1:
-    hashed_passes.append(def_toCrack)
-    hashed_passes.append(def_toCrack2)
-    hashed_passes.append(def_toCrack3)
+    u1= "user1"
+    u2 = "uefa"
+    u3 = "joejoe420"
+    hashed_passes.append((u1,def_toCrack))
+    hashed_passes.append((u2,def_toCrack2))
+    hashed_passes.append((u3,def_toCrack3))
 
 
 #solved_passes = []
@@ -237,13 +252,13 @@ if len(hashed_passes) > 1:
 
 #sending full hashed passes, username, salt, everything
 if full_mode == 1:
-    for crackThis in hashed_passes:
-        x = mainMultiplex(crackThis[1])
-        print("pass for ", hashed_passes[0], " is ", x)
+    while True:
+        x = mainMultiplex()
+        print("pass for ", crackThis[0], " is ", x)
         print("if more passwords remaining simply start client machine and reconnect to me")
 elif default_mode == 1 :
-    for crackThis in hashed_passes:
-        x = defaultMultiplex(crackThis)
+    while True:
+        x = defaultMultiplex()
         print("pass is: ", x)
         print("if more passwords remaining simply start client machine and reconnect to me")
 
