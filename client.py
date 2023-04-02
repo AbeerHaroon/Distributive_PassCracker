@@ -158,8 +158,13 @@ def make_request_to_server(request):
     generate_guessers(hashed_lines, guessers)
 
     print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
-    partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
-    initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
+
+    if THREADS == 1:
+        start_cracking_given_letters(guessers, list(string.ascii_letters))
+    elif THREADS > 1:
+        partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
+        initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
+
     results = show_results(guessers, THREADS)
     print(results)
     client_socket.send(results.encode())
