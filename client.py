@@ -142,34 +142,40 @@ import socket
 
 
 def make_request_to_server(request):
-    SERVER_ADDR = request.ip
-    SERVER_PORT = request.port
-    THREADS = request.threads
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((SERVER_ADDR, SERVER_PORT))
+    try:
+        SERVER_ADDR = request.ip
+        SERVER_PORT = request.port
+        THREADS = request.threads
 
-    # Receive and print the welcome message from the server
-    hashed_lines = client_socket.recv(1024).decode()
-    hashed_lines = hashed_lines.split(',')
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((SERVER_ADDR, SERVER_PORT))
 
-    guessers = []
-    generate_guessers(hashed_lines, guessers)
+        # Receive and print the welcome message from the server
+        hashed_lines = client_socket.recv(1024).decode()
+        hashed_lines = hashed_lines.split(',')
 
-    print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
+        guessers = []
+        generate_guessers(hashed_lines, guessers)
 
-    if THREADS == 1:
-        start_cracking_given_letters(guessers, string.printable)
-    elif THREADS > 1:
-        partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
-        initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
+        print(f"Please wait. Cracking passwords using '{THREADS}' Threads...\n")
 
-    results = show_results(guessers, THREADS)
-    print(results)
-    client_socket.send(results.encode())
+        if THREADS == 1:
+            start_cracking_given_letters(guessers, string.printable)
+        elif THREADS > 1:
+            partitioned_letters = partition_letters(list(string.ascii_lowercase), THREADS)
+            initiate_multithreaded_cracking(partitioned_letters, guessers, THREADS)
 
-    # Close the socket
-    client_socket.close()
+        results = show_results(guessers, THREADS)
+        print(results)
+        client_socket.send(results.encode())
+
+        # Close the socket
+        client_socket.close()
+    except Exception as e:
+        print(f'{e}')
+    finally:
+        client_socket.close()
 
 
 
