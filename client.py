@@ -23,7 +23,7 @@ DEFAULT_PORT = 5000
 
 def define_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--out', help='The IP of the server in which we are connecting to.')
+    parser.add_argument('-o', '--out', help='The IP of the server in which we are connecting to.', required=True)
     parser.add_argument('-p', '--port', help='The Port number of the server we are connecting to. Defaults to 5000', default=DEFAULT_PORT)
     parser.add_argument("-t", "--threads", help=f"The number of threads we would like to run the program on. "
                                                 "Defaults to the current machine's number of CPU Cores", default=multiprocessing.cpu_count())
